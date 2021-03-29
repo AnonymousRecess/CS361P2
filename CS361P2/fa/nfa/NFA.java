@@ -62,7 +62,20 @@ public class NFA implements NFAInterface{
 	@Override
 	public void addTransition(String fromState, char onSymb, String toState) {
 		// TODO Auto-generated method stub
+		NFAState from = checkIfExists(fromState);
+		NFAState to = checkIfExists(toState);
+		if(from == null){
+			System.err.println("ERROR: No NFA state exists with name " + fromState);
+			System.exit(2);
+		} else if (to == null){
+			System.err.println("ERROR: No NFA state exists with name " + toState);
+			System.exit(2);
+		}
+		from.addTransition(onSymb, to);
 		
+		if(!alphabet.contains(onSymb)){
+			alphabet.add(onSymb);
+		}
 	}
 
 	private NFAState checkIfExists(String name){
@@ -108,6 +121,7 @@ public class NFA implements NFAInterface{
 	@Override
 	public DFA getDFA() {
 		// TODO Auto-generated method stub
+		eClosure(startState);
 		return null;
 	}
 	
@@ -131,10 +145,10 @@ public class NFA implements NFAInterface{
 	{
 		visited.add(s);
 		//While we can move to a different state from an 'e'
-		while(s.getTo('e') != null)
+		Set<NFAState> next = s.getTo('e');
+		if(s.getTo('e') != null)
 		{
-		//for every NFASTate in s.getTo('e')
-			Iterator<NFAState> iterator = s.getTo('e').iterator();
+			Iterator<NFAState> iterator = next.iterator();
 			eClosureHelper(iterator.next(), visited);
 		}
 		

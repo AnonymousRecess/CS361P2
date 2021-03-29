@@ -1,13 +1,15 @@
 package fa.nfa;
 
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import fa.State;
 import fa.dfa.DFAState;
 
 public class NFAState extends State{
-    private HashMap<Character,Set<NFAState>> delta;
+    private HashMap<Character,HashSet<NFAState>> delta;
     private boolean isFinal;
 
 
@@ -37,7 +39,7 @@ public NFAState(String name)
 
 private void initDefault(String name ){
 	this.name = name;
-	delta = new HashMap<Character, Set<NFAState>>();
+	delta = new HashMap<Character, HashSet<NFAState>>();
 }
 
 /**
@@ -55,9 +57,14 @@ public boolean isFinal(){
  * @param toState to DFA state
  */
 public void addTransition(char onSymb, NFAState toState){
-	Set<NFAState> ret = delta.get(onSymb);
-	ret.add(toState);
-	delta.put(onSymb, ret);
+	HashSet<NFAState> transitions = new HashSet<NFAState>();
+	//key = symbol, value = states to get to
+	if(delta.containsKey(onSymb))
+	{
+		transitions.addAll(delta.get(onSymb));
+	}
+	transitions.add(toState);
+	delta.put(onSymb, transitions);
 }
 
 /**
@@ -67,12 +74,13 @@ public void addTransition(char onSymb, NFAState toState){
  * @return the new state 
  */
 public Set<NFAState> getTo(char symb){
-	Set<NFAState> ret = delta.get(symb);
+	HashSet<NFAState> returned = new HashSet<NFAState>();
+	returned = delta.get(symb);
 //	if(ret == null){
 //		 System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
 //		 System.exit(2);
 //		}
-	return ret;
+	return returned;
 	
 }
 }
