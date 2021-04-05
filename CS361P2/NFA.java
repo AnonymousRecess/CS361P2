@@ -75,7 +75,7 @@ public class NFA implements NFAInterface {
 		}
 		from.addTransition(onSymb, to);
 
-		if (!alphabet.contains(onSymb)) {
+		if (!alphabet.contains(onSymb) && onSymb != 'e') {
 			alphabet.add(onSymb);
 		}
 	}
@@ -131,7 +131,7 @@ public class NFA implements NFAInterface {
 		Set<NFAState> addedStates = eClosure(startState);
 
 		LinkedList<Set<NFAState>> notSureYet = new LinkedList<>();
-
+		
 		stateFarm.put(addedStates, addedStates.toString());
 
 		dfa.addStartState(stateFarm.get(addedStates));
@@ -204,7 +204,11 @@ public class NFA implements NFAInterface {
 		Set<NFAState> next = s.getTo('e');
 		if (s.getTo('e') != null) {
 			Iterator<NFAState> iterator = next.iterator();
-			eClosureHelper(iterator.next(), visited);
+			NFAState nextnext = iterator.next();
+			if (!visited.contains(nextnext))
+			{
+				eClosureHelper(nextnext, visited);
+			}
 		}
 
 	}
